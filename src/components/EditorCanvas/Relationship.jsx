@@ -15,22 +15,26 @@ export default function Relationship({ data }) {
   const { selectedElement, setSelectedElement } = useSelect();
   const { t } = useTranslation();
 
-  const pathValues = useMemo(() => {
+  const [pathValues, setPathValues] = useState(null);
+
+  useEffect(() => {
     const startTable = tables.find((t) => t.id === data.startTableId);
     const endTable = tables.find((t) => t.id === data.endTableId);
 
     if (!startTable || !endTable || startTable.hidden || endTable.hidden)
       return null;
 
-    return {
+    setPathValues({
       startFieldIndex: startTable.fields.findIndex(
         (f) => f.id === data.startFieldId,
       ),
       endFieldIndex: endTable.fields.findIndex((f) => f.id === data.endFieldId),
       startTable: { x: startTable.x, y: startTable.y },
       endTable: { x: endTable.x, y: endTable.y },
-    };
-  }, [tables, data]);
+    },
+    [tables, data, settings.showComments],
+  );
+})
 
   const pathRef = useRef();
   const labelRef = useRef();

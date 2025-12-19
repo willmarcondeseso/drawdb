@@ -145,11 +145,10 @@ export default function Table({
         <div
           onDoubleClick={openEditor}
           className={`border-2 hover:border-dashed hover:border-blue-500
-               select-none rounded-lg w-full ${
-                 settings.mode === "light"
-                   ? "bg-zinc-100 text-zinc-800"
-                   : "bg-zinc-800 text-zinc-200"
-               } ${isSelected ? "border-solid border-blue-500" : borderColor}`}
+               select-none rounded-lg w-full ${settings.mode === "light"
+              ? "bg-zinc-100 text-zinc-800"
+              : "bg-zinc-800 text-zinc-200"
+            } ${isSelected ? "border-solid border-blue-500" : borderColor}`}
           style={{ direction: "ltr" }}
         >
           <div
@@ -157,9 +156,8 @@ export default function Table({
             style={{ backgroundColor: tableData.color }}
           />
           <div
-            className={`overflow-hidden font-bold h-[40px] flex justify-between items-center border-b border-gray-400 ${
-              settings.mode === "light" ? "bg-zinc-200" : "bg-zinc-900"
-            }`}
+            className={`overflow-hidden font-bold h-[40px] flex justify-between items-center border-b border-gray-400 ${settings.mode === "light" ? "bg-zinc-200" : "bg-zinc-900"
+              }`}
           >
             <div className="px-3 overflow-hidden text-ellipsis whitespace-nowrap">
               {tableData.name}
@@ -199,9 +197,8 @@ export default function Table({
                       </div>
                       <div>
                         <strong
-                          className={`${
-                            tableData.indices.length === 0 ? "" : "block"
-                          }`}
+                          className={`${tableData.indices.length === 0 ? "" : "block"
+                            }`}
                         >
                           {t("indices")}:
                         </strong>{" "}
@@ -212,11 +209,10 @@ export default function Table({
                             {tableData.indices.map((index, k) => (
                               <div
                                 key={k}
-                                className={`flex items-center my-1 px-2 py-1 rounded ${
-                                  settings.mode === "light"
+                                className={`flex items-center my-1 px-2 py-1 rounded ${settings.mode === "light"
                                     ? "bg-gray-100"
                                     : "bg-zinc-800"
-                                }`}
+                                  }`}
                               >
                                 <i className="fa-solid fa-thumbtack me-2 mt-1 text-slate-500"></i>
                                 <div>
@@ -280,8 +276,8 @@ export default function Table({
                         {e.type +
                           ((dbToTypes[database][e.type].isSized ||
                             dbToTypes[database][e.type].hasPrecision) &&
-                          e.size &&
-                          e.size !== ""
+                            e.size &&
+                            e.size !== ""
                             ? "(" + e.size + ")"
                             : "")}
                       </p>
@@ -360,11 +356,16 @@ export default function Table({
   function field(fieldData, index) {
     return (
       <div
-        className={`${
-          index === tableData.fields.length - 1
+        className={`${index === tableData.fields.length - 1
             ? ""
             : "border-b border-gray-400"
-        } group h-[36px] px-2 py-1 flex justify-between items-center gap-1 w-full overflow-hidden`}
+          } group ${settings.showComments && fieldData.comment
+            ? "min-h-[36px]"
+            : "h-[36px]"
+          } px-2 py-1 flex ${settings.showComments && fieldData.comment
+            ? "flex-wrap"
+            : ""
+          } justify-between items-center gap-1 overflow-hidden`}
         onPointerEnter={(e) => {
           if (!e.isPrimary) return;
 
@@ -389,77 +390,90 @@ export default function Table({
           e.target.releasePointerCapture(e.pointerId);
         }}
       >
-        <div
-          className={`${
-            hoveredField === index ? "text-zinc-400" : ""
-          } flex items-center gap-2 overflow-hidden`}
+        <div id={tableData['id'] + "-" + tableData.fields.findIndex((f) => f.id === fieldData.id) + "-" + fieldData.id}
+          className={`${hoveredField === index ? "text-zinc-400" : ""
+            } flex items-center justify-between gap-2 overflow-hidden w-full box-border`}
         >
-          <button
-            className="shrink-0 w-[10px] h-[10px] bg-[#2f68adcc] rounded-full"
-            onPointerDown={(e) => {
-              if (!e.isPrimary) return;
+          <div
+            className={`${hoveredField === index ? "text-zinc-400" : ""
+              } flex items-center gap-2 overflow-hidden`}
+          >
+            <button
+              className="shrink-0 w-[10px] h-[10px] bg-[#2f68adcc] rounded-full"
+              onPointerDown={(e) => {
+                if (!e.isPrimary) return;
 
-              handleGripField();
-              setLinkingLine((prev) => ({
-                ...prev,
-                startFieldId: fieldData.id,
-                startTableId: tableData.id,
-                startX: tableData.x + 15,
-                startY:
-                  tableData.y +
-                  index * tableFieldHeight +
-                  tableHeaderHeight +
-                  tableColorStripHeight +
-                  12,
-                endX: tableData.x + 15,
-                endY:
-                  tableData.y +
-                  index * tableFieldHeight +
-                  tableHeaderHeight +
-                  tableColorStripHeight +
-                  12,
-              }));
-            }}
-          />
-          <span className="overflow-hidden text-ellipsis whitespace-nowrap">
-            {fieldData.name}
-          </span>
-        </div>
-        <div className="text-zinc-400">
-          {hoveredField === index ? (
-            <Button
-              theme="solid"
-              size="small"
-              style={{
-                backgroundColor: "#d42020b3",
-              }}
-              icon={<IconMinus />}
-              disabled={layout.readOnly}
-              onClick={() => {
-                if (layout.readOnly) return;
-                deleteField(fieldData, tableData.id);
+                handleGripField();
+                setLinkingLine((prev) => ({
+                  ...prev,
+                  startFieldId: fieldData.id,
+                  startTableId: tableData.id,
+                  startX: tableData.x + 15,
+                  startY:
+                    tableData.y +
+                    index * tableFieldHeight +
+                    tableHeaderHeight +
+                    tableColorStripHeight +
+                    12,
+                  endX: tableData.x + 15,
+                  endY:
+                    tableData.y +
+                    index * tableFieldHeight +
+                    tableHeaderHeight +
+                    tableColorStripHeight +
+                    12,
+                }));
               }}
             />
-          ) : settings.showDataTypes ? (
-            <div className="flex gap-1 items-center">
-              {fieldData.primary && <IconKeyStroked />}
-              {!fieldData.notNull && <span className="font-mono">?</span>}
-              <span
-                className={
-                  "font-mono " + dbToTypes[database][fieldData.type].color
-                }
-              >
-                {fieldData.type +
-                  ((dbToTypes[database][fieldData.type].isSized ||
-                    dbToTypes[database][fieldData.type].hasPrecision) &&
-                  fieldData.size &&
-                  fieldData.size !== ""
-                    ? `(${fieldData.size})`
-                    : "")}
-              </span>
-            </div>
-          ) : null}
+            <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+              {fieldData.name}
+            </span>
+          </div>
+          <div className={`text-zinc-400 ${settings.showComments && fieldData.comment
+              ? "box-border"
+              : ""
+            }`}>
+            {hoveredField === index && settings.showIconMinus ? (
+              <Button
+                theme="solid"
+                size="small"
+                style={{
+                  backgroundColor: "#d42020b3",
+                }}
+                icon={<IconMinus />}
+                onClick={() => deleteField(fieldData, tableData.id)}
+              />
+            ) : settings.showDataTypes ? (
+              <div className="flex gap-1 items-center">
+                {fieldData.primary && <IconKeyStroked />}
+                {!fieldData.notNull && <span className="font-mono">?</span>}
+                <span
+                  className={
+                    "font-mono " + dbToTypes[database][fieldData.type].color
+                  }
+                >
+                  {fieldData.type +
+                    ((dbToTypes[database][fieldData.type].isSized ||
+                      dbToTypes[database][fieldData.type].hasPrecision) &&
+                      fieldData.size &&
+                      fieldData.size !== ""
+                      ? `(${fieldData.size})`
+                      : "")}
+                </span>
+              </div>
+            ) : null}
+          </div>
         </div>
+        {settings.showComments && fieldData.comment ? (
+          <div
+            className={`${hoveredField === index ? "text-gray-400" : "text-gray-500"
+              } text-xs font-sans tracking-tighter leading-snug h-auto min-h-0 flex items-center justify-center text-center px-0 py-0 overflow-hidden w-full box-border`}
+          >
+            <span className="overflow-hidden text-ellipsis">
+              {fieldData.comment}
+            </span>
+          </div>
+        ) : null}
       </div>
     );
   }
